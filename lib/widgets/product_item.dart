@@ -34,7 +34,8 @@ class ProductItem extends StatelessWidget {
         ),
         footer: GridTileBar(
           leading: IconButton(
-            icon: Icon(product.isFavorite ? Icons.favorite : Icons.favorite_border),
+            icon: Icon(
+                product.isFavorite ? Icons.favorite : Icons.favorite_border),
             onPressed: () {
               product.toggleFavoriteStatus();
             },
@@ -49,6 +50,16 @@ class ProductItem extends StatelessWidget {
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
               cart.addItem(product.id, product.price, product.title);
+              Scaffold.of(context).hideCurrentSnackBar();
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(
+                  'Added item to cart!',
+                ),
+                action: SnackBarAction(label: 'UNDO', onPressed: () {
+                  cart.removeSingleItem(product.id);
+                },),
+                duration: Duration(seconds: 5),
+              ));
             },
             color: Theme.of(context).accentColor,
           ),
