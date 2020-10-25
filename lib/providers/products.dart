@@ -61,8 +61,26 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void addProduct() {
-    // _items.add();
+  void addProduct(Product product) {
+    final newProduct = Product(
+        id: DateTime.now().toString(),
+        imageUrl: product.imageUrl,
+        title: product.title,
+        price: product.price,
+        description: product.description);
+    _items.add(newProduct);
+    notifyListeners();
+  }
+
+  void updateProduct(String id, Product newProduct) {
+    final productIndex = _items.indexWhere((element) => element.id == id);
+    if(productIndex < 0) return;
+    _items[productIndex] = newProduct;
+    notifyListeners();
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((element) => element.id == id);
     notifyListeners();
   }
 
