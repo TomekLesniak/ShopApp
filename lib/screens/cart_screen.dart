@@ -57,7 +57,7 @@ class _CartScreenState extends State<CartScreen> {
                         ))
                       : FlatButton(
                           child: Text('ORDER NOW'),
-                          onPressed: () async {
+                          onPressed: (cart.totalAmount <=0 || _processingOrder)  ? null : () async {
                             setState(() {
                               _processingOrder = true;
                             });
