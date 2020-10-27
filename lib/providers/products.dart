@@ -63,9 +63,31 @@ class Products with ChangeNotifier {
   //   _showFavoritesOnly = false;
   //   notifyListeners();
   // }
+  final url = 'https://flutter-shop-educational.firebaseio.com/products.json';
+
+  Future<void> fetchAndSetProducts() async {
+    try {
+      final response = await http.get(url);
+      print(json.decode(response.body));
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      final List<Product> loadedProducts = [];
+      extractedData.forEach((productId, productData) {
+        loadedProducts.add(Product(
+            id: productId,
+            title: productData['title'],
+            description: productData['description'],
+            price: productData['price'],
+            imageUrl: productData['imageUrl'],
+            isFavorite: productData['isFavorite']));
+      });
+      _items = loadedProducts;
+      notifyListeners();
+    } catch (error) {
+      throw error;
+    }
+  }
 
   Future<void> addProduct(Product product) async {
-    const url = 'https://flutter-shop-educational.firebaseio.com/products';
     try {
       final response = await http.post(url,
           body: json.encode(
