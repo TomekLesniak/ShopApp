@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/product.dart';
 import '../providers/cart.dart';
 import '../screens/product_detail_screen.dart';
+import '../providers/products.dart';
 
 class ProductItem extends StatelessWidget {
   // final String id;
@@ -16,6 +17,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context);
     final cart = Provider.of<Cart>(context, listen: false);
+    final scaffold = Scaffold.of(context);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -36,8 +38,18 @@ class ProductItem extends StatelessWidget {
           leading: IconButton(
             icon: Icon(
                 product.isFavorite ? Icons.favorite : Icons.favorite_border),
-            onPressed: () {
+            onPressed: () async {
               product.toggleFavoriteStatus();
+              try {
+                await Provider.of<Products>(context, listen: false)
+                    .markAsFavorite(product.id);
+              } catch (error) {
+                print(error);
+                product.toggleFavoriteStatus();
+                scaffold.showSnackBar(SnackBar(
+                  content: Text('Failed to update the server'),
+                ));
+              }
             },
             color: Theme.of(context).accentColor,
           ),
@@ -55,9 +67,12 @@ class ProductItem extends StatelessWidget {
                 content: Text(
                   'Added item to cart!',
                 ),
-                action: SnackBarAction(label: 'UNDO', onPressed: () {
-                  cart.removeSingleItem(product.id);
-                },),
+                action: SnackBarAction(
+                  label: 'UNDO',
+                  onPressed: () {
+                    cart.removeSingleItem(product.id);
+                  },
+                ),
                 duration: Duration(seconds: 5),
               ));
             },

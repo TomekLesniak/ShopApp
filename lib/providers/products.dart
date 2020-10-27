@@ -129,7 +129,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final url = 'https://flutter-shop-educational.firebaseio.com/products/$id.json';
+    final url =
+        'https://flutter-shop-educational.firebaseio.com/products/$id.json';
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
     var existingProduct = _items[existingProductIndex];
@@ -143,6 +144,18 @@ class Products with ChangeNotifier {
       throw HttpException('Could not delete product.');
     }
     existingProduct = null;
+  }
+
+  Future<void> markAsFavorite(String id) async {
+    final url =
+        'https://flutter-shop-educational.firebaseio.com/products/$id.json';
+    final product = findById(id);
+
+    final response = await http.patch(url,
+        body: json.encode({'isFavorite': product.isFavorite}));
+
+    if(response.statusCode >= 400)
+      throw HttpException('Could not fetch product');
   }
 
   Product findById(String id) {
