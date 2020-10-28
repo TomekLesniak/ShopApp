@@ -1,3 +1,4 @@
+import 'package:ShopApp/providers/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,13 +40,15 @@ class ProductItem extends StatelessWidget {
             icon: Icon(
                 product.isFavorite ? Icons.favorite : Icons.favorite_border),
             onPressed: () async {
-              product.toggleFavoriteStatus();
               try {
-                await Provider.of<Products>(context, listen: false)
-                    .markAsFavorite(product.id);
+                await product.toggleFavoriteStatus(
+                    Provider.of<Auth>(context, listen: false).userId,
+                    Provider.of<Auth>(context, listen:false).token);
               } catch (error) {
                 print(error);
-                product.toggleFavoriteStatus();
+                product.toggleFavoriteStatus(
+                    Provider.of<Auth>(context, listen: false).userId,
+                    Provider.of<Auth>(context, listen:false).token);
                 scaffold.showSnackBar(SnackBar(
                   content: Text('Failed to update the server'),
                 ));
