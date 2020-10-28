@@ -44,6 +44,10 @@ class Products with ChangeNotifier {
 
   var _showFavoritesOnly = false;
 
+  final String authToken;
+
+  Products(this.authToken, this._items);
+
   List<Product> get items {
     // if(_showFavoritesOnly) {
     //   return _items.where((product) => product.isFavorite).toList();
@@ -64,9 +68,10 @@ class Products with ChangeNotifier {
   //   _showFavoritesOnly = false;
   //   notifyListeners();
   // }
-  final url = 'https://flutter-shop-educational.firebaseio.com/products.json';
 
   Future<void> fetchAndSetProducts() async {
+  final url = 'https://flutter-shop-educational.firebaseio.com/products.json?auth=$authToken';
+
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -90,6 +95,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
+  final url = 'https://flutter-shop-educational.firebaseio.com/products.json?auth=$authToken';
+
     try {
       final response = await http.post(url,
           body: json.encode(
@@ -118,7 +125,7 @@ class Products with ChangeNotifier {
     final productIndex = _items.indexWhere((element) => element.id == id);
     if (productIndex < 0) return;
     final url =
-        'https://flutter-shop-educational.firebaseio.com/products/$id.json';
+        'https://flutter-shop-educational.firebaseio.com/products/$id.json?auth=$authToken';
     await http.patch(url,
         body: json.encode({
           'title': newProduct.title,
@@ -132,7 +139,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url =
-        'https://flutter-shop-educational.firebaseio.com/products/$id.json';
+        'https://flutter-shop-educational.firebaseio.com/products/$id.json?auth=$authToken';
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
     var existingProduct = _items[existingProductIndex];
@@ -150,7 +157,7 @@ class Products with ChangeNotifier {
 
   Future<void> markAsFavorite(String id) async {
     final url =
-        'https://flutter-shop-educational.firebaseio.com/products/$id.json';
+        'https://flutter-shop-educational.firebaseio.com/products/$id.json?auth=$authToken';
     final product = findById(id);
 
     final response = await http.patch(url,
