@@ -30,9 +30,13 @@ class ProductItem extends StatelessWidget {
               arguments: product.id,
             );
           },
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
+          child: Hero(
+            tag: product.id,
+            child: FadeInImage(
+              placeholder: AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(product.imageUrl),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         footer: GridTileBar(
@@ -43,12 +47,12 @@ class ProductItem extends StatelessWidget {
               try {
                 await product.toggleFavoriteStatus(
                     Provider.of<Auth>(context, listen: false).userId,
-                    Provider.of<Auth>(context, listen:false).token);
+                    Provider.of<Auth>(context, listen: false).token);
               } catch (error) {
                 print(error);
                 product.toggleFavoriteStatus(
                     Provider.of<Auth>(context, listen: false).userId,
-                    Provider.of<Auth>(context, listen:false).token);
+                    Provider.of<Auth>(context, listen: false).token);
                 scaffold.showSnackBar(SnackBar(
                   content: Text('Failed to update the server'),
                 ));
